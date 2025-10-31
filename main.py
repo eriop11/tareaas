@@ -1,7 +1,21 @@
 import streamlit as st
 
-st.title("Mi primera app con Streamlit")
-st.write("Hola Erich 👋, esta es una interfaz web hecha con Python.")
+valor = st.slider("Selecciona cuánto me amas del 1 al 100", 0, 100, 50)
 
-valor = st.slider("Seleccioná un número", 0, 100, 50)
-st.write("El valor elegido es:", valor)
+# Mensajes según el valor
+if valor == 0:
+    st.write("Me mato😢")
+elif valor <= 20:
+    st.write("Echo es muy poquito😅")
+elif valor <= 40:
+    st.write("Dale culo no seas malo 😏")
+elif valor <= 60:
+    st.write("Me pareche medio mal pero eshta bien💛")
+elif valor <= 80:
+    st.write("AAA un poquito mashhh💖")
+elif valor < 100:
+    st.write("chi chi tu puedesh mass😍")
+else:  # valor == 100
+    st.write("¡Yo tambien preciosa! 🥰💯")
+
+
