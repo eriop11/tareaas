@@ -1,5 +1,5 @@
 import streamlit as st
-
+st.write("Me matooooooooooooo😢")
 def fondo_rojo():
     """
     Cambia el fondo de toda la página de Streamlit a rojo.
