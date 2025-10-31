@@ -2,16 +2,7 @@ import streamlit as st
 from rojo import fondo_rojo 
 fondo_rojo()
 valor = st.slider("Selecciona cuánto me amas del 1 al 100", 0, 100, 0)
- st.markdown(
-        """
-        <style>
-        body {
-            background-color: red;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+
 # Mensajes según el valor
 if valor == 0:
     st.write("Me mato😢")
