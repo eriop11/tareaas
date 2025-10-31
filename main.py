@@ -1,6 +1,6 @@
 import streamlit as st
 
-valor = st.slider("Selecciona cuánto me amas del 1 al 100", 0, 100, 50)
+valor = st.slider("Selecciona cuánto me amas del 1 al 100", 0, 100, 0)
 
 # Mensajes según el valor
 if valor == 0:
