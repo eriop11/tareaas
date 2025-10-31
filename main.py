@@ -1,4 +1,5 @@
 import streamlit as st
+from rojo import fondo_rojo 
 
 valor = st.slider("Selecciona cuánto me amas del 1 al 100", 0, 100, 0)
 
@@ -17,5 +18,6 @@ elif valor < 100:
     st.write("chi chi tu puedesh mass😍")
 else:  # valor == 100
     st.write("¡Yo tambien preciosa! 🥰💯")
+    fondo_rojo()
 
 
