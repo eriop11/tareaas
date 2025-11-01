@@ -73,11 +73,13 @@ def render_header():
         </div>
     """, unsafe_allow_html=True)
 
-    # 3. El menú de navegación se mantiene igual
+    # 3. El menú de navegación ahora incluye "Usuarios"
     selected_view = option_menu(
         menu_title=None,
-        options=["Inicio", "Análisis", "Reportes"],
-        icons=['house-door-fill', 'bar-chart-line-fill', 'file-earmark-text-fill'],
+        # ----- CAMBIOS AQUÍ -----
+        options=["Inicio", "Análisis", "Reportes", "Usuarios"],
+        icons=['house-door-fill', 'bar-chart-line-fill', 'file-earmark-text-fill', 'people-fill'],
+        # ------------------------
         orientation="horizontal",
         styles={
             "container": {"padding": "0!important", "background-color": "transparent"},
@@ -91,8 +93,5 @@ def render_header():
             "nav-link-selected": {"background-color": "#2F80ED"},
         }
     )
-    
-    # La línea divisoria ya no es tan necesaria gracias al fondo del header, pero se puede mantener si se desea.
-    # st.markdown("---") # Puedes descomentar esto si quieres la línea de vuelta
     
     return selected_view
