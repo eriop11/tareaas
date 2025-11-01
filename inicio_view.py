@@ -1,96 +1,69 @@
 # inicio_view.py
 
 import streamlit as st
-import gspread
-from google.oauth2.service_account import Credentials
-from gspread_dataframe import set_with_dataframe
-import pandas as pd
-from datetime import datetime
+from gsheets_connector import get_sheet  # <-- Importamos desde nuestro conector
 
-# --- FUNCIONES PARA INTERACTUAR CON GOOGLE SHEETS ---
+# Usamos st.cache_data para cachear los datos que devuelve la función.
+# ttl (Time To Live) define cada cuántos segundos se debe refrescar la caché.
+@st.cache_data(ttl=300)  # Refresca los datos cada 5 minutos (300 segundos)
+def cargar_ultima_nota():
+    """
+    Carga la última nota de la hoja de cálculo.
+    Esta función no recibe parámetros "inhasheables".
+    """
+    worksheet = get_sheet("Hoja1")  # <-- Cambia "Hoja1" por el nombre de tu pestaña
+    
+    if worksheet:
+        # Obtenemos todos los registros (asume que la primera fila es encabezado)
+        all_data = worksheet.get_all_records()
+        if all_data:
+            # Devolvemos el último diccionario de la lista
+            return all_data[-1]
+    return None
 
-@st.cache_resource(ttl=600) # Cache para no reconectar en cada rerun
-def conectar_a_gsheets():
-    """Conecta con Google Sheets usando las credenciales de Streamlit Secrets."""
-    try:
-        creds = st.secrets["gcp_service_account"]
-        scopes = ['https://www.googleapis.com/auth/spreadsheets']
-        s_creds = Credentials.from_service_account_info(creds, scopes=scopes)
-        client = gspread.authorize(s_creds)
-        return client
-    except Exception as e:
-        st.error(f"Error al conectar con Google Sheets: {e}")
-        return None
-
-@st.cache_data(ttl=60) # Cache para no recargar los datos tan seguido
-def cargar_nota(cliente_gsheets):
-    """Carga la última nota guardada desde Google Sheets."""
-    if cliente_gsheets is None:
-        return "" # Devuelve vacío si no hay conexión
-    try:
-        # Reemplaza "NotasAppStreamlit" con el nombre exacto de tu hoja de cálculo
-        sheet = cliente_gsheets.open("NotasAppStreamlit").sheet1
-        df = pd.DataFrame(sheet.get_all_records())
-        if not df.empty:
-            return df.iloc[-1]['nota'] # Devuelve el texto de la última fila
-        return "" # Devuelve vacío si la hoja no tiene notas
-    except gspread.exceptions.SpreadsheetNotFound:
-        st.warning("Hoja de cálculo 'NotasAppStreamlit' no encontrada. Creando una nota inicial.")
-        return ""
-    except Exception as e:
-        st.error(f"Error al cargar la nota: {e}")
-        return ""
-
-def guardar_nota(cliente_gsheets, nueva_nota):
-    """Guarda una nueva nota en Google Sheets."""
-    if cliente_gsheets is None:
-        st.error("No se pudo conectar a Google Sheets para guardar la nota.")
-        return False
-    try:
-        sheet = cliente_gsheets.open("NotasAppStreamlit").sheet1
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        nueva_fila = [timestamp, nueva_nota]
-        sheet.append_row(nueva_fila)
-        # Limpiamos el caché de la función de carga para que la próxima vez lea los datos actualizados
+def guardar_nueva_nota(datos_nota: list):
+    """
+    Guarda una nueva fila de datos en la hoja de cálculo.
+    """
+    worksheet = get_sheet("Hoja1") # <-- Cambia "Hoja1" por el nombre de tu pestaña
+    if worksheet:
+        worksheet.append_row(datos_nota)
+        # Limpiamos la caché de la función que lee los datos para que se actualice al momento.
         st.cache_data.clear()
         return True
-    except Exception as e:
-        st.error(f"Error al guardar la nota: {e}")
-        return False
+    return False
 
-# --- FUNCIÓN PRINCIPAL DE LA VISTA ---
-
+# Esta es la función principal que se llama desde app.py
 def mostrar_pagina_inicio():
-    """Renderiza la página de "Inicio" con el bloc de notas conectado a Google Sheets."""
-    st.header("🏠 Página de Inicio")
-    st.write("Bloc de notas persistente. La información se guarda en Google Sheets.")
-    st.markdown("---")
+    st.header("🏠 Vista de Inicio")
+    st.write("Aquí puedes ver la última nota registrada y añadir una nueva.")
+
+    st.subheader("Última nota registrada")
     
-    # Conectamos al servicio
-    cliente = conectar_a_gsheets()
-    
-    # Cargamos la última nota guardada para mostrarla
-    ultima_nota = cargar_nota(cliente)
-    
-    # Usamos el estado de sesión para manejar el texto actual en el widget
-    if 'nota_actual' not in st.session_state:
-        st.session_state.nota_actual = ultima_nota
-    
-    # Creamos el área de texto
-    nota_ingresada = st.text_area(
-        label="Escribe algo para guardar:",
-        value=st.session_state.nota_actual,
-        height=250,
-        key="area_de_nota"
-    )
-    
-    # Botón para guardar
-    if st.button("Guardar Nota"):
-        if nota_ingresada:
-            if guardar_nota(cliente, nota_ingresada):
+    # Llamamos a la función que carga los datos (sin pasarle el cliente)
+    ultima_nota = cargar_ultima_nota()
+
+    if ultima_nota:
+        st.json(ultima_nota)
+    else:
+        st.info("No se encontraron notas o hubo un error al cargar los datos.")
+
+    st.divider()
+
+    st.subheader("Añadir nueva nota")
+    with st.form("nueva_nota_form", clear_on_submit=True):
+        col1, col2 = st.columns(2)
+        with col1:
+            # Ajusta estos campos a las columnas de tu Google Sheet
+            campo1 = st.text_input("Nombre del dato")
+        with col2:
+            campo2 = st.number_input("Valor numérico", step=1)
+        
+        submitted = st.form_submit_button("Guardar Nota")
+        if submitted:
+            # La lista debe tener el mismo orden que las columnas en tu hoja
+            nueva_fila = [campo1, campo2]
+            if guardar_nueva_nota(nueva_fila):
                 st.success("¡Nota guardada con éxito!")
-                st.session_state.nota_actual = nota_ingresada # Actualizamos el estado
             else:
                 st.error("No se pudo guardar la nota.")
-        else:
-            st.warning("No hay nada que guardar.")
