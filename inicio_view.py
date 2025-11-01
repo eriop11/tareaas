@@ -11,7 +11,7 @@ def cargar_ultima_nota():
     Carga la última nota de la hoja de cálculo.
     Esta función no recibe parámetros "inhasheables".
     """
-    worksheet = get_sheet("Hoja1")  # <-- Cambia "Hoja1" por el nombre de tu pestaña
+    worksheet = get_sheet("dataefe")  # <-- Cambia "Hoja1" por el nombre de tu pestaña
     
     if worksheet:
         # Obtenemos todos los registros (asume que la primera fila es encabezado)
@@ -25,7 +25,7 @@ def guardar_nueva_nota(datos_nota: list):
     """
     Guarda una nueva fila de datos en la hoja de cálculo.
     """
-    worksheet = get_sheet("Hoja1") # <-- Cambia "Hoja1" por el nombre de tu pestaña
+    worksheet = get_sheet("dataefe") # <-- Cambia "Hoja1" por el nombre de tu pestaña
     if worksheet:
         worksheet.append_row(datos_nota)
         # Limpiamos la caché de la función que lee los datos para que se actualice al momento.
