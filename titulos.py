@@ -5,37 +5,56 @@ from streamlit_option_menu import option_menu
 
 def render_header():
     """
-    Renderiza el header completo: Título con ícono y colores, y la barra de navegación.
+    Renderiza el header completo con un diseño mejorado:
+    - Fondo de contenedor gris-azulado oscuro.
+    - Título "Planilla de trabajo" más grande.
+    - "efe" aún más grande y en cursiva (bastardilla).
     
     Devuelve:
-        str: El nombre de la vista seleccionada en el menú de navegación 
-             ("Inicio", "Análisis", o "Reportes").
+        str: El nombre de la vista seleccionada en el menú de navegación.
     """
     
-    # Inyectamos CSS para el estilo del título y el ícono
+    # 1. CSS mejorado para el nuevo estilo
+    #    - Se agrega un fondo, padding y bordes redondeados al contenedor.
+    #    - Se ajustan los tamaños de fuente y se añade una clase para 'efe'.
+    #    - 'align-items: baseline' alinea el texto grande y el más grande por la base.
     st.markdown("""
         <style>
             .header-container {
                 display: flex;
-                align-items: center;
-                margin-bottom: 1rem;
+                align-items: baseline; /* Alinea textos de distinto tamaño por la base */
+                background-color: #262730; /* Fondo gris-azulado oscuro */
+                padding: 20px 25px;
+                border-radius: 10px;
+                margin-bottom: 1.5rem; /* Más separación con el menú */
             }
             .header-icon svg {
-                width: 40px;
-                height: 40px;
-                margin-right: 15px;
-                color: #2F80ED; /* Azul */
+                width: 45px; /* Ícono ligeramente más grande */
+                height: 45px;
+                margin-right: 20px;
+                color: #5DADE2; /* Un azul más brillante que contrasta con el fondo */
+                flex-shrink: 0; /* Evita que el ícono se encoja si el texto es largo */
             }
             .header-title {
-                font-size: 2.5rem;
-                font-weight: bold;
+                font-size: 2.3rem; /* Tamaño agrandado para "Planilla de trabajo de" */
+                font-weight: 700;
+                color: #EAECEE; /* Un blanco suave para mejor lectura */
                 padding: 0;
                 margin: 0;
+                line-height: 1; /* Ajusta la altura de línea */
+            }
+            .efe-style {
+                font-size: 3.5rem; /* 'efe' mucho más grande */
+                font-style: italic; /* Estilo bastardilla (cursiva) */
+                font-weight: 800; /* Más grueso */
+                margin-left: 10px; /* Pequeño espacio para separar */
+                line-height: 1;
             }
         </style>
     """, unsafe_allow_html=True)
 
-    # Renderizamos el HTML del título con el ícono y los colores personalizados
+    # 2. HTML actualizado para usar las nuevas clases de CSS
+    #    - El texto "efe" ahora está envuelto en un span con la clase 'efe-style'.
     st.markdown(f"""
         <div class="header-container">
             <div class="header-icon">
@@ -43,14 +62,18 @@ def render_header():
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
             </div>
-            <p class="header-title">
-                Planilla de trabajo de 
-                <span style="color: white;">e</span><span style="color: orange;">f</span><span style="color: white;">e</span>
-            </p>
+            <div>
+                <p class="header-title">
+                    Planilla de trabajo de 
+                    <span class="efe-style">
+                        <span style="color: white;">e</span><span style="color: orange;">f</span><span style="color: white;">e</span>
+                    </span>
+                </p>
+            </div>
         </div>
     """, unsafe_allow_html=True)
 
-    # Creamos el menú de navegación y guardamos la opción seleccionada
+    # 3. El menú de navegación se mantiene igual
     selected_view = option_menu(
         menu_title=None,
         options=["Inicio", "Análisis", "Reportes"],
@@ -69,8 +92,7 @@ def render_header():
         }
     )
     
-    # Línea divisoria para separar el header del contenido
-    st.markdown("---")
+    # La línea divisoria ya no es tan necesaria gracias al fondo del header, pero se puede mantener si se desea.
+    # st.markdown("---") # Puedes descomentar esto si quieres la línea de vuelta
     
-    # Devolvemos la opción que el usuario seleccionó para que el main sepa qué mostrar
     return selected_view
