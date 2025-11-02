@@ -1,4 +1,4 @@
-# app.py (Versión con Fondo Corporativo)
+# app.py (Versión Corregida con Fondo Corporativo)
 
 import streamlit as st
 from titulos import render_header
@@ -8,22 +8,28 @@ from usuarios_view import mostrar_pagina_usuarios
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
     page_title="Planilla efe",
-    page_icon="fotos/logo1.png", # Asegúrate que el logo se llame logo1.png
+    page_icon="fotos/logo1.png",
     layout="wide"
 )
 
-# --- APLICAR EL FONDO DE PANTALLA GRIS OSCURO ---
+# --- APLICAR EL FONDO DE PANTALLA (MÉTODO CORREGIDO) ---
 st.markdown("""
     <style>
-        /* Selecciona el contenedor principal de la aplicación */
-        .main .block-container {
-            background-color: #2E2E2E; /* Gris oscuro, puedes ajustarlo */
-            padding: 2rem; /* Añade un poco de padding para que no se pegue a los bordes */
-            border-radius: 10px;
+        /* Selecciona el contenedor principal de la aplicación y el header */
+        [data-testid="stAppViewContainer"] {
+            background-color: #1c1c1c; /* El gris más oscuro para el fondo general */
         }
-        /* Para cambiar el fondo general fuera del contenedor principal */
-        body {
-            background-color: #1c1c1c; /* Un gris aún más oscuro para el fondo exterior */
+        
+        [data-testid="stHeader"] {
+            background-color: transparent; /* Hace que el header de Streamlit sea transparente */
+        }
+
+        /* Puedes mantener un color de fondo diferente para el área de contenido si lo deseas */
+        /* Si quieres que TODO sea del mismo color, puedes comentar o eliminar este bloque */
+        .main .block-container {
+            background-color: #2E2E2E; 
+            padding: 2rem;
+            border-radius: 10px;
         }
     </style>
 """, unsafe_allow_html=True)
