@@ -96,7 +96,7 @@ def render_header():
                 "margin": "0px 5px",
                 "--hover-color": "#cb6012"
             },
-            "nav-link-selected": {"background-color": "#2F80ED"},
+            "nav-link-selected": {"background-color": "#cb6012"},
         }
     )
     
