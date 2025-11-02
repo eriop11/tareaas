@@ -41,7 +41,7 @@ def render_header():
                 width: 45px;
                 height: 45px;
                 margin-right: 20px;
-                color: #5DADE2;
+                color: #cb6012;
                 flex-shrink: 0;
             }
             .header-title {
