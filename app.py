@@ -16,7 +16,7 @@ st.markdown("""
     <style>
         /* Fondo general de la aplicación */
         body {
-            background-color: #f0f2f6; /* El gris claro que te gusta */
+            background-color: #ffffff; /* El gris claro que te gusta */
         }
         
         /* Contenedor principal de la app */
