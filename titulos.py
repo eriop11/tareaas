@@ -24,7 +24,7 @@ def render_header():
     Renderiza el header completo con un logo en lugar del texto "efe".
     """
     # Obtenemos la imagen codificada llamando a nuestra función auxiliar
-    logo_base64 = get_image_as_base64("fotos/logo.png")
+    logo_base64 = get_image_as_base64("fotos/logo1.png")
 
     # 1. CSS (sin cambios)
     st.markdown("""
