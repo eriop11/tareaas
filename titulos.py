@@ -1,4 +1,4 @@
-# titulos.py (Versión con Menú Espaciado)
+# titulos.py (Versión con Ícono Blanco en Selección)
 
 import streamlit as st
 from streamlit_option_menu import option_menu
@@ -65,13 +65,15 @@ def render_header():
             "nav-link": {
                 "font-size": "18px",
                 "text-align": "center",
-                # --- CAMBIO CLAVE AQUÍ ---
-                "margin": "0px 15px",  # Aumentamos el margen horizontal de 5px a 15px
-                "padding": "8px 25px", # Añadimos padding para hacer los botones más grandes
-                # -------------------------
+                "margin": "0px 15px",
+                "padding": "8px 25px",
                 "--hover-color": "#4a4a4a"
             },
-            "nav-link-selected": {"background-color": "#cb6012"},
+            "nav-link-selected": {
+                "background-color": "#cb6012",
+                # --- LÍNEA AÑADIDA AQUÍ ---
+                "icon-color": "white" 
+            },
         }
     )
     
