@@ -1,4 +1,4 @@
-# app.py (Versión Corregida sin Recuadro Blanco)
+# app.py (Versión Definitiva sin Recuadro Blanco)
 
 import streamlit as st
 from titulos import render_header
@@ -29,14 +29,15 @@ st.markdown("""
             background-color: transparent;
         }
 
-        /* --- CAMBIO CLAVE AQUÍ --- */
-        /* Área de contenido principal (ahora transparente, sin borde ni padding extra) */
+        /* --- CAMBIO CLAVE Y DEFINITIVO AQUÍ --- */
+        /* Forzamos que el área de contenido principal tenga el MISMO fondo que la app */
         .main .block-container {
-            background-color: transparent; /* Hacemos el contenedor transparente */
-            border: none; /* Quitamos cualquier borde */
-            padding-top: 2rem; /* Mantenemos un poco de espacio arriba */
+            background-color: #f0f2f6; /* ¡El mismo gris claro! */
+            border: none;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
         }
-        /* ------------------------- */
+        /* -------------------------------------- */
 
         /* Estilos para los widgets en tema claro */
         [data-testid="stTextInput"] input, 
