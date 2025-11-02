@@ -53,7 +53,7 @@ def render_header():
                 line-height: 1;
             }
             .header-logo-img {
-                height: 50px;
+                height: 80px;
                 margin-left: 15px;
                 vertical-align: middle;
             }
