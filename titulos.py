@@ -94,7 +94,7 @@ def render_header():
                 "font-size": "18px",
                 "text-align": "center",
                 "margin": "0px 5px",
-                "--hover-color": "#3e4249"
+                "--hover-color": "#cb6012"
             },
             "nav-link-selected": {"background-color": "#2F80ED"},
         }
