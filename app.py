@@ -21,7 +21,7 @@ st.markdown("""
         
         /* Contenedor principal de la app */
         [data-testid="stAppViewContainer"] {
-            background-color: #f0f2f6;
+            background-color: #ffffff;
         }
 
         /* --- CAMBIO CLAVE Y DEFINITIVO --- */
