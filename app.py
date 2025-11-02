@@ -1,4 +1,4 @@
-# app.py (Versión Corregida con Fondo Corporativo)
+# app.py (Versión con Texto Blanco)
 
 import streamlit as st
 from titulos import render_header
@@ -12,20 +12,25 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- APLICAR EL FONDO DE PANTALLA (MÉTODO CORREGIDO) ---
+# --- APLICAR ESTILOS GLOBALES (Fondo y Color de Texto) ---
 st.markdown("""
     <style>
-        /* Selecciona el contenedor principal de la aplicación y el header */
+        /* Selecciona el contenedor principal de la aplicación */
         [data-testid="stAppViewContainer"] {
-            background-color: #1c1c1c; /* El gris más oscuro para el fondo general */
+            background-color: #1c1c1c; /* Gris más oscuro para el fondo general */
+            color: #EAECEE; /* <-- LÍNEA AÑADIDA: Color de texto blanco suave */
         }
         
+        /* Asegurarnos que los títulos también tomen el color */
+        h1, h2, h3, h4, h5, h6 {
+            color: #EAECEE;
+        }
+
         [data-testid="stHeader"] {
             background-color: transparent; /* Hace que el header de Streamlit sea transparente */
         }
 
-        /* Puedes mantener un color de fondo diferente para el área de contenido si lo deseas */
-        /* Si quieres que TODO sea del mismo color, puedes comentar o eliminar este bloque */
+        /* Área de contenido principal */
         .main .block-container {
             background-color: #2E2E2E; 
             padding: 2rem;
