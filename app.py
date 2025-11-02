@@ -32,7 +32,7 @@ st.markdown("""
         /* --- CAMBIO CLAVE Y DEFINITIVO AQUÍ --- */
         /* Forzamos que el área de contenido principal tenga el MISMO fondo que la app */
         .main .block-container {
-            background-color: #f0f2f6; /* ¡El mismo gris claro! */
+            background-color: transparent; /* ¡El mismo gris claro! */
             border: none;
             padding-top: 2rem;
             padding-bottom: 2rem;
