@@ -1,4 +1,4 @@
-# titulos.py (Versión con Ícono Blanco en Selección)
+# titulos.py (Versión Definitiva con Ícono Blanco en Selección)
 
 import streamlit as st
 from streamlit_option_menu import option_menu
@@ -32,6 +32,14 @@ def render_header():
             .header-logo-img {
                 height: 80px; margin-left: 15px; vertical-align: middle;
             }
+
+            /* --- REGLA DE CSS AÑADIDA AQUÍ --- */
+            /* Esto fuerza al ícono DENTRO de un link seleccionado a ser blanco */
+            .nav-link-selected .icon {
+                color: white !important;
+            }
+            /* ---------------------------------- */
+
         </style>
     """, unsafe_allow_html=True)
 
@@ -69,11 +77,8 @@ def render_header():
                 "padding": "8px 25px",
                 "--hover-color": "#4a4a4a"
             },
-            "nav-link-selected": {
-                "background-color": "#cb6012",
-                # --- LÍNEA AÑADIDA AQUÍ ---
-                "icon-color": "white" 
-            },
+            # Se quitó "icon-color" de aquí porque no funcionaba
+            "nav-link-selected": {"background-color": "#cb6012"},
         }
     )
     
