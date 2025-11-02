@@ -32,7 +32,7 @@ def render_header():
             .header-container {
                 display: flex;
                 align-items: center;
-                background-color: #262730;
+                background-color: #000000;
                 padding: 15px 25px;
                 border-radius: 10px;
                 margin-bottom: 1.5rem;
