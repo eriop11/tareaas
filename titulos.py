@@ -89,14 +89,14 @@ def render_header():
         orientation="horizontal",
         styles={
             "container": {"padding": "0!important", "background-color": "transparent"},
-            "icon": {"color": "orange", "font-size": "18px"},
+            "icon": {"color": "#cb6012", "font-size": "18px"},
             "nav-link": {
                 "font-size": "18px",
                 "text-align": "center",
                 "margin": "0px 5px",
                 "--hover-color": "#cb6012"
             },
-            "nav-link-selected": {"background-color": "#cb6012"},
+            "nav-link-selected": {"background-color": "#626262"},
         }
     )
     
