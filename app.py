@@ -27,10 +27,10 @@ st.markdown("""
         /* --- CAMBIO CLAVE Y DEFINITIVO --- */
         /* Forzamos el color de fondo en el contenedor principal y eliminamos sus bordes y sombras */
         [data-testid="stVerticalBlock"] {
-            background-color: #f0f2f6;
+            background-color: #ffffff;
         }
         .main .block-container {
-            background-color: #f0f2f6;
+            background-color: #ffffff;
             border: none;
             box-shadow: none;
         }
