@@ -10,7 +10,7 @@ from usuarios_view import mostrar_pagina_usuarios # <-- 1. IMPORTA LA NUEVA FUNC
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
     page_title="Planilla efe",
-    page_icon="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmIYsfxtzoexc8rO1axPW8mMre5YasiQfwEw&s",
+    page_icon="fotos/logo1.png",
     layout="wide"
 )
 
