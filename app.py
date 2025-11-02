@@ -1,4 +1,4 @@
-# app.py (Versión Definitiva sin Recuadro Blanco)
+# app.py (Versión Definitiva con Fondo Uniforme)
 
 import streamlit as st
 from titulos import render_header
@@ -11,14 +11,31 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- APLICAR ESTILOS GLOBALES ---
+# --- APLICAR ESTILOS GLOBALES (MÉTODO DEFINITIVO) ---
 st.markdown("""
     <style>
         /* Fondo general de la aplicación */
-        [data-testid="stAppViewContainer"] {
+        body {
             background-color: #f0f2f6; /* El gris claro que te gusta */
         }
         
+        /* Contenedor principal de la app */
+        [data-testid="stAppViewContainer"] {
+            background-color: #f0f2f6;
+        }
+
+        /* --- CAMBIO CLAVE Y DEFINITIVO --- */
+        /* Forzamos el color de fondo en el contenedor principal y eliminamos sus bordes y sombras */
+        [data-testid="stVerticalBlock"] {
+            background-color: #f0f2f6;
+        }
+        .main .block-container {
+            background-color: #f0f2f6;
+            border: none;
+            box-shadow: none;
+        }
+        /* -------------------------------------- */
+
         /* Aseguramos que el texto por defecto sea negro */
         body, p, li, h1, h2, h3, h4, h5, h6 {
             color: #111111;
@@ -28,16 +45,6 @@ st.markdown("""
         [data-testid="stHeader"] {
             background-color: transparent;
         }
-
-        /* --- CAMBIO CLAVE Y DEFINITIVO AQUÍ --- */
-        /* Forzamos que el área de contenido principal tenga el MISMO fondo que la app */
-        .main .block-container {
-            background-color: transparent; /* ¡El mismo gris claro! */
-            border: none;
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-        }
-        /* -------------------------------------- */
 
         /* Estilos para los widgets en tema claro */
         [data-testid="stTextInput"] input, 
