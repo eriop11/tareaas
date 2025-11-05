@@ -2,6 +2,10 @@
 
 # ... (todas las funciones de datos de arriba permanecen igual) ...
 import streamlit as st
+from gsheets_connector import get_sheet
+from usuarios_view import cargar_usuarios # Importamos la función para cargar usuarios
+import pandas as pd # Usaremos pandas para mostrar las tareas en una tabla bonita
+from datetime import datetime
 # --- VISTA PRINCIPAL ---
 
 def mostrar_pagina_inicio():
