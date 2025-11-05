@@ -1,7 +1,7 @@
 # inicio_view.py (Versión Corregida)
 
 # ... (todas las funciones de datos de arriba permanecen igual) ...
-
+import streamlit as st
 # --- VISTA PRINCIPAL ---
 
 def mostrar_pagina_inicio():
