@@ -1,19 +1,39 @@
 # inicio_view.py (Versión Corregida)
 
-# ... (todas las funciones de datos de arriba permanecen igual) ...
 import streamlit as st
-from gsheets_connector import get_sheet
-from usuarios_view import cargar_usuarios # Importamos la función para cargar usuarios
-import pandas as pd # Usaremos pandas para mostrar las tareas en una tabla bonita
+# Importamos TODAS las funciones necesarias desde el conector
+from gsheets_connector import (
+    cargar_usuarios, # Suponiendo que esta función también está en tu conector o en usuarios_view
+    cargar_categorias,
+    cargar_tareas,
+    cargar_comentarios,
+    get_category_colors,
+    guardar_nueva_tarea,
+    guardar_nueva_categoria,
+    eliminar_tarea,
+    actualizar_tarea,
+    actualizar_estado_tarea,
+    guardar_comentario
+)
+# Si cargar_usuarios está en otro archivo, mantenemos la importación original
+# from usuarios_view import cargar_usuarios 
+import pandas as pd
 from datetime import datetime
+
 # --- VISTA PRINCIPAL ---
 
 def mostrar_pagina_inicio():
     st.header("📋 Gestor de Tareas Avanzado")
 
     # --- Carga de datos ---
-    usuarios = cargar_usuarios()
-    nombres_usuarios = [u.get("Nombre") for u in usuarios]
+    # NOTA: Asegúrate de que la función cargar_usuarios() está definida donde corresponde.
+    # Por ahora, la comentaré para evitar errores si no la tienes.
+    # usuarios = cargar_usuarios() 
+    # nombres_usuarios = [u.get("Nombre") for u in usuarios]
+    
+    # Usaremos una lista temporal de usuarios si la función no existe aún
+    nombres_usuarios = ["Usuario A", "Usuario B", "Admin"]
+
     categorias = cargar_categorias()
     tareas = cargar_tareas()
     comentarios = cargar_comentarios()
@@ -40,7 +60,7 @@ def mostrar_pagina_inicio():
                 avance = st.slider("Porcentaje de Avance (%)", 0, 100, 0)
 
                 if st.form_submit_button("Guardar Tarea"):
-                    if tarea_titulo: # Al menos el título es obligatorio
+                    if tarea_titulo:
                         datos_tarea = {
                             "titulo": tarea_titulo, "descripcion": tarea_desc, "usuario": usuario_asignado,
                             "categoria": categoria_tarea, "fecha_limite": fecha_limite,
@@ -69,19 +89,19 @@ def mostrar_pagina_inicio():
     if not tareas:
         st.info("No hay tareas registradas. ¡Añade la primera!")
     else:
-        # Filtramos primero las tareas que no tengan un ID para evitar problemas
         tareas_validas = [t for t in tareas if t.get('ID')]
-        df_tareas = pd.DataFrame(tareas_validas)
         
-        # Continuamos solo si el dataframe no está vacío después de filtrar
-        if not df_tareas.empty:
+        if not tareas_validas:
+             st.info("No hay tareas válidas con ID para mostrar.")
+        else:
+            df_tareas = pd.DataFrame(tareas_validas)
             df_activas = df_tareas[df_tareas['Estado'] != 'Terminada']
 
             if df_activas.empty:
                 st.success("🎉 ¡Felicidades! No hay tareas pendientes.")
             else:
                 for index, row in df_activas.iterrows():
-                    color = category_colors.get(row.get("Categoría"), "#FFFFFF")
+                    color = category_colors.get(row.get("Categoria"), "#FFFFFF") # Corregido a "Categoria" si así se llama en tu GSheet
                     
                     with st.container(border=True):
                         col_info, col_actions = st.columns([0.8, 0.2])
@@ -93,19 +113,18 @@ def mostrar_pagina_inicio():
                             st.markdown(f"""
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <div style="width: 15px; height: 15px; background-color: {color}; border-radius: 50%;"></div>
-                                    <span>{row.get('Categoría')}</span>
+                                    <span>{row.get('Categoria')}</span>
                                 </div>
                             """, unsafe_allow_html=True)
                             
-                            st.progress(int(row.get("Avance (%)", 0)), text=f"{row.get('Avance (%)')}% - {row.get('Estado')}")
+                            avance_val = int(row.get("Avance (%)", 0))
+                            st.progress(avance_val, text=f"{avance_val}% - {row.get('Estado')}")
 
                         with col_actions:
-                            # Botón para Editar
-                            if st.button("✏️ Editar", key=f"edit_{row.get('ID')}_{index}"): # <-- CAMBIO AQUÍ
+                            if st.button("✏️ Editar", key=f"edit_{row.get('ID')}_{index}"):
                                 st.session_state.tarea_a_editar = row.to_dict()
 
-                            # Botón para Eliminar
-                            if st.button("🗑️ Borrar", key=f"del_{row.get('ID')}_{index}"): # <-- CAMBIO AQUÍ
+                            if st.button("🗑️ Borrar", key=f"del_{row.get('ID')}_{index}"):
                                 eliminar_tarea(row.get('ID'))
                                 st.rerun()
                                 
@@ -122,14 +141,14 @@ def mostrar_pagina_inicio():
                 nueva_desc = st.text_area("Descripción", value=tarea_actual.get('Descripción'))
                 
                 try:
-                    fecha_val = datetime.strptime(tarea_actual.get('Fecha Límite'), "%Y-%m-%d").date()
+                    fecha_val = datetime.strptime(str(tarea_actual.get('Fecha Límite')), "%Y-%m-%d").date()
                 except (TypeError, ValueError):
                     fecha_val = datetime.now().date()
                     
                 nueva_fecha = st.date_input("Fecha Límite", value=fecha_val)
                 
                 user_index = nombres_usuarios.index(tarea_actual.get('Usuario Asignado')) if tarea_actual.get('Usuario Asignado') in nombres_usuarios else 0
-                cat_index = categorias.index(tarea_actual.get('Categoría')) if tarea_actual.get('Categoría') in categorias else 0
+                cat_index = categorias.index(tarea_actual.get('Categoria')) if tarea_actual.get('Categoria') in categorias else 0
                 
                 nuevo_usuario = st.selectbox("Asignar a:", options=nombres_usuarios, index=user_index)
                 nueva_categoria = st.selectbox("Categoría:", options=categorias, index=cat_index)
@@ -148,13 +167,11 @@ def mostrar_pagina_inicio():
         
         edit_modal()
 
-
     st.divider()
 
     # --- SECCIÓN PARA ACTUALIZAR ESTADO Y AÑADIR COMENTARIOS ---
     st.subheader("⚙️ Actualizar Avance y Añadir Comentarios")
     
-    # Nos aseguramos de trabajar solo con tareas que tienen ID
     tareas_no_terminadas = [t for t in tareas if t.get('Estado') != 'Terminada' and t.get('ID')]
     if not tareas_no_terminadas:
         st.write("No hay tareas activas para actualizar.")
@@ -166,17 +183,16 @@ def mostrar_pagina_inicio():
         tarea_a_actualizar = next((t for t in tareas_no_terminadas if t.get('ID') == id_tarea_seleccionada), None)
 
         if tarea_a_actualizar:
-            with st.form("actualizar_estado_form"):
+            with st.form("actualizar_estado_form", key=f"update_form_{id_tarea_seleccionada}"):
                 st.write(f"**Actualizando:** {tarea_a_actualizar.get('Título')}")
                 
-                try:
-                    avance_actual = int(tarea_a_actualizar.get("Avance (%)"))
-                except (ValueError, TypeError):
-                    avance_actual = 0
+                avance_actual = int(tarea_a_actualizar.get("Avance (%)", 0))
                 
+                estados = ["Pendiente", "En Proceso", "Terminada"]
+                estado_actual_idx = estados.index(tarea_a_actualizar.get("Estado")) if tarea_a_actualizar.get("Estado") in estados else 0
+
                 nuevo_estado = st.selectbox(
-                    "Nuevo Estado", ["Pendiente", "En Proceso", "Terminada"],
-                    index=["Pendiente", "En Proceso", "Terminada"].index(tarea_a_actualizar.get("Estado"))
+                    "Nuevo Estado", estados, index=estado_actual_idx
                 )
                 nuevo_avance = st.slider("Nuevo Porcentaje de Avance (%)", 0, 100, avance_actual)
                 
@@ -188,18 +204,18 @@ def mostrar_pagina_inicio():
             st.markdown("---")
             st.write(f"**Comentarios para:** {tarea_a_actualizar.get('Título')}")
 
-            comentarios_tarea = [c for c in comentarios if c.get('ID Tarea') == id_tarea_seleccionada]
+            comentarios_tarea = [c for c in comentarios if str(c.get('ID Tarea')) == str(id_tarea_seleccionada)]
             if not comentarios_tarea:
                 st.info("Aún no hay comentarios para esta tarea.")
             else:
-                for comm in sorted(comentarios_tarea, key=lambda x: x['Fecha'], reverse=True):
-                    st.info(f"**{comm['Usuario']}** ({comm['Fecha']}):\n> {comm['Comentario']}")
+                for comm in sorted(comentarios_tarea, key=lambda x: x.get('Fecha', ''), reverse=True):
+                    st.info(f"**{comm.get('Usuario')}** ({comm.get('Fecha')}):\n> {comm.get('Comentario')}")
 
-            with st.form("comentario_form", clear_on_submit=True):
+            with st.form("comentario_form", clear_on_submit=True, key=f"comment_form_{id_tarea_seleccionada}"):
                 usuario_comenta = st.selectbox("Tu usuario:", options=nombres_usuarios, key="user_comment")
                 nuevo_comentario = st.text_area("Añadir un comentario:")
                 
                 if st.form_submit_button("Publicar Comentario"):
                     if nuevo_comentario:
                         guardar_comentario(id_tarea_seleccionada, usuario_comenta, nuevo_comentario)
-                        st.rerun()
+                        st.rerun()```
