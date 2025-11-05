@@ -12,7 +12,7 @@ SCOPES = [
     'https://www.googleapis.com/auth/drive'
 ]
 
-# --- CONEXIÓN BÁSICA (Tu código original) ---
+# --- CONEXIÓN BÁSICA ---
 
 @st.cache_resource(ttl=3600) # Cache para 1 hora
 def connect_to_gsheets():
@@ -41,7 +41,15 @@ def get_sheet(sheet_name: str):
             return None
     return None
 
-# --- FUNCIONES DE CARGA DE DATOS ---
+# --- FUNCIONES DE CARGA DE DATOS (LECTURA) ---
+
+@st.cache_data(ttl=300) # Cache para 5 minutos
+def cargar_usuarios():
+    """Carga los usuarios desde la pestaña 'Usuarios'."""
+    sheet = get_sheet("Usuarios")
+    if sheet:
+        return sheet.get_all_records()
+    return []
 
 @st.cache_data(ttl=60) # Cache para 1 minuto
 def cargar_tareas():
@@ -50,12 +58,13 @@ def cargar_tareas():
         return sheet.get_all_records()
     return []
 
-@st.cache_data(ttl=300) # Cache para 5 minutos
+@st.cache_data(ttl=300)
 def cargar_categorias():
     sheet = get_sheet("Categorias")
     if sheet:
         # Asume que las categorías están en la primera columna
-        return [row[0] for row in sheet.get_all_values()[1:]] # Omitir encabezado
+        values = sheet.col_values(1)
+        return values[1:] if len(values) > 1 else [] # Omitir encabezado
     return []
 
 @st.cache_data(ttl=60)
@@ -65,33 +74,27 @@ def cargar_comentarios():
         return sheet.get_all_records()
     return []
 
-# --- FUNCIONES DE ESCRITURA Y MODIFICACIÓN DE DATOS ---
+# --- FUNCIONES DE MODIFICACIÓN DE DATOS (ESCRITURA) ---
 
 def guardar_nueva_tarea(datos_tarea: dict):
+    """Añade una nueva fila a la hoja 'Tareas'."""
     sheet = get_sheet("Tareas")
     if sheet:
         try:
-            # Generar un ID único para la tarea
             id_tarea = str(uuid.uuid4())
-            # Formatear la fecha
             fecha_str = datos_tarea["fecha_limite"].strftime("%Y-%m-%d")
             
+            # Asegúrate de que el orden coincida con las columnas de tu Google Sheet
             nueva_fila = [
-                id_tarea,
-                datos_tarea["titulo"],
-                datos_tarea["descripcion"],
-                datos_tarea["usuario"],
-                datos_tarea["categoria"],
-                fecha_str,
-                datos_tarea["estado"],
-                datos_tarea["avance"]
+                id_tarea, datos_tarea["titulo"], datos_tarea["descripcion"],
+                datos_tarea["usuario"], datos_tarea["categoria"], fecha_str,
+                datos_tarea["estado"], datos_tarea["avance"]
             ]
             sheet.append_row(nueva_fila)
             st.cache_data.clear() # Limpiar cache para recargar datos
             return True
         except Exception as e:
             st.error(f"No se pudo guardar la tarea: {e}")
-            return False
     return False
 
 def guardar_nueva_categoria(nombre_cat: str):
@@ -103,7 +106,6 @@ def guardar_nueva_categoria(nombre_cat: str):
             return True
         except Exception as e:
             st.error(f"No se pudo guardar la categoría: {e}")
-            return False
     return False
 
 def eliminar_tarea(id_tarea: str):
@@ -127,7 +129,7 @@ def actualizar_tarea(id_tarea: str, datos: dict):
             if cell:
                 row_num = cell.row
                 fecha_str = datos["fecha_limite"].strftime("%Y-%m-%d")
-                # Asume el orden de las columnas
+                # El rango a actualizar NO incluye la columna A (ID)
                 sheet.update(f'B{row_num}:H{row_num}', [[
                     datos["titulo"], datos["descripcion"], datos["usuario"],
                     datos["categoria"], fecha_str, datos["estado"], datos["avance"]
@@ -145,7 +147,7 @@ def actualizar_estado_tarea(id_tarea: str, estado: str, avance: int):
             cell = sheet.find(id_tarea)
             if cell:
                 row_num = cell.row
-                # Asume que 'Estado' es la columna G y 'Avance (%)' es la H
+                # Asume que 'Estado' es la columna G (7) y 'Avance (%)' es la H (8)
                 sheet.update_cell(row_num, 7, estado)
                 sheet.update_cell(row_num, 8, avance)
                 st.cache_data.clear()
@@ -159,6 +161,7 @@ def guardar_comentario(id_tarea: str, usuario: str, comentario: str):
     if sheet:
         try:
             fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            # ID Comentario, ID Tarea, Usuario, Comentario, Fecha
             nueva_fila = [str(uuid.uuid4()), id_tarea, usuario, comentario, fecha_actual]
             sheet.append_row(nueva_fila)
             st.cache_data.clear()
@@ -167,7 +170,7 @@ def guardar_comentario(id_tarea: str, usuario: str, comentario: str):
             st.error(f"No se pudo guardar el comentario: {e}")
     return False
 
-# --- FUNCIONES AUXILIARES ---
+# --- FUNCIÓN AUXILIAR ---
 
 def get_category_colors(categorias: list):
     """Genera un mapa de colores para las categorías."""
